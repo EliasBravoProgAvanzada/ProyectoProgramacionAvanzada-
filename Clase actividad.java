@@ -1,17 +1,13 @@
-/**
- * Representa una actividad o disciplina deportiva impartida en un club.
- */
+// Representa una actividad o disciplina deportiva impartida en un club.
 public class Actividad {
-    // Todos los atributos son privados cumpliendo con SIA-3
+    // Todos los atributos son privados Como dice el punto SIA 3
     private String idActividad;
     private String nombre;
     private String horario;
     private int cuposMaximos;
     private double costoMensual;
 
-    /**
-     * Constructor de la clase Actividad.
-     */
+    // constructo de la claase    
     public Actividad(String idActividad, String nombre, String horario, int cuposMaximos, double costoMensual) {
         this.idActividad = idActividad;
         this.nombre = nombre;
@@ -20,7 +16,7 @@ public class Actividad {
         this.costoMensual = costoMensual;
     }
 
-    // --- Getters y Setters ---
+    // y sus respectivos Getters y Setter
 
     public String getIdActividad() {
         return idActividad;
@@ -60,6 +56,24 @@ public class Actividad {
 
     public void setCostoMensual(double costoMensual) {
         this.costoMensual = costoMensual;
+    }
+
+    //Actuliza el costo mensual
+    public void actulizarCosto(double nuevoCosto){
+        if(nuevoCosto>=0){
+            this.costoMensual=nuevoCOsto;
+            system.out.println("Costo de la actividad actulizado a: $"+ this.costoMensual);
+        }
+    }
+
+    //actuliza el costo aplicando un porcentaje de aumento 
+
+    public void actualizarCosto(double porcentajeAumento, boolean aplicarPorcentaje){
+        if(aplicarPorcentaje && porcentajeAumento>0){
+            double aumento=this.costoMensual *(porcentajeAumento/100);
+            this.costoMensual +=aumento;
+            system.out.println("costo acutlizado por "+ porcentajeAumento+ "% a: $"+this.costoMensual )
+        }
     }
 
     @Override
