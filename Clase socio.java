@@ -1,3 +1,5 @@
+//Clse base que represetna un miembro del club deportivo
+
 public abstract class socio{
     protected string rut;
     protected string nombre;
@@ -7,9 +9,11 @@ public abstract class socio{
         this.nombre=nombre;
     }
 
-
+    //Metodo que sera sobreescrito por las clases hijas 
     public abstract double calcularMensualidad(double tarifaBase);
 
+
+    //sus respectivos Getters y Setters 
     public string getRut(){
         return rut;
     }

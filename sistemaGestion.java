@@ -186,6 +186,30 @@ public class SistemaGestion{
                 }
             }
             System.out.println("datos")
-        } catch(ios )
+        } catch(IOException e){
+            system.err.pritnln("Error");
+        }
+    }
+
+    public void cargarDatos(){
+        File archivo = new File(ARCHIVO_DATOS);
+        if(!archivo.exist()){
+            return;
+        }
+
+        try(Scanner sc=new Scanner(archivo)){
+            while(sc.hasNextLine()){
+                String[] linea = sc.nextLine().split(",");
+                if(linea[0].equals("CLUB")){
+                    this.registrarCLub(new ClubDeportivo(linea[1],linea[2],linea[3]));
+                } else if(linea[0].equals("CLUB")){
+                    Actividad nuevaActividad= new Actividad(linea[2],linea[3],linea[4],integer.parseInt(linea[5],double.parseDouble(linea(6))));
+                    this.agregarActividadAClub(linea[1],nuevaActividad);
+                }
+            }
+            System.out.println("DAtos guardados");
+        }catch(Exception e){
+            System.err.println("Error");
+        }
     }
 }
