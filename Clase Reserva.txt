@@ -1,0 +1,34 @@
+package clubdeportivo;
+
+public class Reserva {
+
+    private String rutSocio;
+    private String horario;
+    private int precio;
+
+    public Reserva(String rutSocio, String horario, int precio) {
+        this.rutSocio = rutSocio;
+        this.horario = horario;
+        this.precio = precio;
+    }
+
+    public String getRutSocio() {
+        return rutSocio;
+    }
+
+    public String getHorario() {
+        return horario;
+    }
+
+    public int getPrecio() {
+        return precio;
+    }
+
+    public void mostrarReserva() {
+
+        System.out.println("RUT Socio: " + rutSocio);
+        System.out.println("Horario: " + horario);
+        System.out.println("Precio: $" + precio);
+
+    }
+}

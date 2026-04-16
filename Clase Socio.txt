@@ -1,0 +1,55 @@
+package clubdeportivo;
+
+public class Socio extends Persona{
+    private String categoria; //Básico, Platino, Diamante
+    private int estado; // 0 : Inactivo , 1 : Activo
+    
+    public Socio(String nombre, String apellido, int edad, String rut, String categoria, int estado){
+        super(nombre, apellido, edad, rut);
+        this.categoria = categoria;
+        this.estado = estado;
+    }
+    
+    public String getCategoria(){
+        return categoria;
+    }
+    
+    public void setCategoria(String categoria){
+        this.categoria = categoria;    
+    }
+    
+    public int getEstado(){
+        return estado;
+    }
+    
+    public void setEstado(int estado){
+        this.estado = estado;
+    }
+    
+    @Override
+    public void mostrarPersona() {
+        super.mostrarPersona();
+
+        System.out.println("Categoria: " + categoria);
+        if (estado == 1) {
+            System.out.println("Estado: Activo");
+        } 
+        
+        else {
+            System.out.println("Estado: Inactivo");
+        }
+        
+    }
+
+    public boolean estaActivo() {
+        return estado == 1;
+    }
+    
+    public void activar() {
+        estado = 1;
+    }
+
+    public void desactivar() {
+        estado = 0;
+    }
+}

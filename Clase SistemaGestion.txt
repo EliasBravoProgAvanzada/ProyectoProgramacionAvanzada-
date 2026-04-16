@@ -1,0 +1,665 @@
+package clubdeportivo;
+
+import java.util.*;
+
+public class SistemaGestion {
+
+    private Map<String, Socio> mapaSocios;
+    private Map<String, Club> mapaClubes;
+    private List<Reserva> listaReservas;
+    private Map<String, String> socioClubMap;
+
+    private Scanner sc;
+
+    public SistemaGestion() {
+        mapaSocios = new HashMap<>();
+        mapaClubes = new HashMap<>();
+        listaReservas = new ArrayList<>();
+        socioClubMap = new HashMap<>();
+        sc = new Scanner(System.in);
+
+        // Club por defecto
+        Club sinClub = new Club("0", "Sin club", "No asignado");
+        mapaClubes.put("0", sinClub);
+    }
+
+    // ================= MENU PRINCIPAL =================
+
+    public void menu() {
+
+        int opcion;
+
+        do {
+
+            System.out.println("\n====================================");
+            System.out.println("       SISTEMA CLUB DEPORTIVO");
+            System.out.println("====================================");
+            System.out.println("1. Gestionar Socios");
+            System.out.println("2. Gestionar Clubes");
+            System.out.println("3. Gestionar Reservas");
+            System.out.println("4. Mostrar Datos");
+            System.out.println("0. Salir");
+            System.out.print("Seleccione una opcion: ");
+
+            opcion = sc.nextInt();
+            sc.nextLine();
+
+            switch (opcion) {
+
+                case 1:
+                    menuSocios();
+                    break;
+
+                case 2:
+                    menuClubes();
+                    break;
+
+                case 3:
+                    menuReservas();
+                    break;
+
+                case 4:
+                    mostrarTodo();
+                    break;
+
+                case 0:
+                    System.out.println("Saliendo del sistema...");
+                    break;
+
+                default:
+                    System.out.println("Opcion invalida");
+
+            }
+
+        } while (opcion != 0);
+
+    }
+
+    // ================= SOCIOS =================
+
+    private void menuSocios() {
+
+        int opcion;
+
+        do {
+
+            System.out.println("\n----------- GESTION DE SOCIOS -----------");
+            System.out.println("1. Agregar Socio");
+            System.out.println("2. Buscar Socio");
+            System.out.println("3. Eliminar Socio");
+            System.out.println("4. Modificar Socio");
+            System.out.println("5. Mostrar Socios");
+            System.out.println("0. Volver");
+            System.out.print("Seleccione: ");
+
+            opcion = sc.nextInt();
+            sc.nextLine();
+
+            switch (opcion) {
+
+                case 1:
+                    agregarSocio();
+                    break;
+
+                case 2:
+                    buscarSocio();
+                    break;
+
+                case 3:
+                    eliminarSocio();
+                    break;
+
+                case 4:
+                    modificarSocio();
+                    break;
+
+                case 5:
+                    mostrarSocios();
+                    break;
+
+            }
+
+        } while (opcion != 0);
+
+    }
+
+    private void agregarSocio() {
+
+        System.out.print("Ingrese RUT: ");
+        String rut = sc.nextLine();
+
+        if (mapaSocios.containsKey(rut)) {
+            System.out.println("El socio ya existe");
+            return;
+        }
+
+        System.out.print("Nombre: ");
+        String nombre = sc.nextLine();
+
+        System.out.print("Apellido: ");
+        String apellido = sc.nextLine();
+
+        System.out.print("Edad: ");
+        int edad = sc.nextInt();
+        sc.nextLine();
+
+        System.out.print("Categoria: ");
+        String categoria = sc.nextLine();
+
+        System.out.print("Estado (1 : Activo / 0 : Inactivo): ");
+        int estado = sc.nextInt();
+        sc.nextLine();
+
+        Socio socio = new Socio(nombre, apellido, edad, rut, categoria, estado);
+
+        mapaSocios.put(rut, socio);
+
+        // ===== ASIGNAR CLUB =====
+
+        if (mapaClubes.size() == 1) {
+
+            socioClubMap.put(rut, "0");
+            System.out.println("No hay clubes disponibles.");
+
+        } else {
+
+            System.out.println("Seleccione un club para el socio:");
+
+            for (Club club : mapaClubes.values()) {
+                System.out.println(club.getIdClub() + " - " + club.getNombre());
+            }
+
+            System.out.print("Ingrese ID del club: ");
+            String idClub = sc.nextLine();
+
+            if (!mapaClubes.containsKey(idClub)) {
+
+                socioClubMap.put(rut, "0");
+                System.out.println("Club no valido.");
+
+            } else {
+
+                socioClubMap.put(rut, idClub);
+                System.out.println("Socio asignado al club correctamente");
+
+            }
+
+        }
+
+        System.out.println("Socio agregado correctamente");
+
+    }
+
+    private void buscarSocio() {
+
+        System.out.print("Ingrese RUT: ");
+        String rut = sc.nextLine();
+
+        Socio socio = mapaSocios.get(rut);
+
+        if (socio != null) {
+
+            socio.mostrarPersona();
+
+            String idClub = socioClubMap.get(rut);
+            Club club = mapaClubes.get(idClub);
+
+            System.out.println("Club: " + club.getNombre());
+
+        } else {
+            System.out.println("Socio no encontrado");
+        }
+
+    }
+
+    private void eliminarSocio() {
+
+        System.out.print("Ingrese RUT: ");
+        String rut = sc.nextLine();
+
+        if (mapaSocios.remove(rut) != null) {
+
+            socioClubMap.remove(rut);
+            System.out.println("Socio eliminado correctamente");
+
+        } else {
+            System.out.println("Socio no encontrado");
+        }
+
+    }
+
+    private void modificarSocio() {
+
+        System.out.print("Ingrese RUT: ");
+        String rut = sc.nextLine();
+
+        Socio socio = mapaSocios.get(rut);
+
+        if (socio == null) {
+            System.out.println("Socio no encontrado");
+            return;
+        }
+
+        System.out.print("Nuevo nombre: ");
+        socio.setNombre(sc.nextLine());
+
+        System.out.print("Nuevo apellido: ");
+        socio.setApellido(sc.nextLine());
+
+        System.out.print("Nueva edad: ");
+        socio.setEdad(sc.nextInt());
+        sc.nextLine();
+
+        System.out.print("Nueva categoria: ");
+        socio.setCategoria(sc.nextLine());
+
+        System.out.print("Nuevo estado (1=Activo / 0=Inactivo): ");
+        socio.setEstado(sc.nextInt());
+        sc.nextLine();
+
+        System.out.println("Club actual del socio: ");
+        String idClubActual = socioClubMap.get(rut);
+        Club clubActual = mapaClubes.get(idClubActual);
+        if (clubActual != null) {
+            System.out.println(clubActual.getIdClub() + " - " + clubActual.getNombre());
+        }
+
+        System.out.println("Desea cambiar el club del socio?");
+        System.out.println("1. Si");
+        System.out.println("2. No");
+        System.out.print("Seleccione: ");
+
+        int opcionClub = sc.nextInt();
+        sc.nextLine();
+
+        if (opcionClub == 1) {
+
+            System.out.println("Clubes disponibles:");
+
+            for (Club club : mapaClubes.values()) {
+                System.out.println(club.getIdClub() + " - " + club.getNombre());
+            }
+
+            System.out.print("Ingrese ID del nuevo club: ");
+            String nuevoIdClub = sc.nextLine();
+
+            if (!mapaClubes.containsKey(nuevoIdClub)) {
+                System.out.println("Club no valido. Se mantiene el club actual");
+            } else {
+                socioClubMap.put(rut, nuevoIdClub);
+                System.out.println("Club del socio actualizado correctamente");
+            }
+        }
+
+        System.out.println("Socio modificado correctamente");
+
+    }
+
+    private void mostrarSocios() {
+
+        if (mapaSocios.isEmpty()) {
+            System.out.println("No hay socios registrados");
+            return;
+        }
+
+        for (Socio socio : mapaSocios.values()) {
+
+            System.out.println("================================");
+            socio.mostrarPersona();
+
+            String idClub = socioClubMap.get(socio.getRut());
+            Club club = mapaClubes.get(idClub);
+
+            System.out.println("Club: " + club.getNombre());
+
+        }
+
+    }
+
+    // ================= CLUBES =================
+
+    private void menuClubes() {
+
+        int opcion;
+
+        do {
+
+            System.out.println("\n----------- GESTION DE CLUBES -----------");
+            System.out.println("1. Agregar Club");
+            System.out.println("2. Buscar Club");
+            System.out.println("3. Eliminar Club");
+            System.out.println("4. Agregar Actividad a Club");
+            System.out.println("5. Eliminar Actividad de Club");
+            System.out.println("6. Mostrar Actividades de un Club");
+            System.out.println("7. Mostrar Clubes");
+            System.out.println("0. Volver");
+            System.out.print("Seleccione: ");
+
+            opcion = sc.nextInt();
+            sc.nextLine();
+
+            switch (opcion) {
+
+                case 1:
+                    agregarClub();
+                    break;
+
+                case 2:
+                    buscarClub();
+                    break;
+
+                case 3:
+                    eliminarClub();
+                    break;
+
+                case 4:
+                    agregarActividadAClub();
+                    break;
+
+                case 5:
+                    eliminarActividadDeClub();
+                    break;
+
+                case 6:
+                    mostrarActividadesDeClub();
+                    break;
+
+                case 7:
+                    mostrarClubes();
+                    break;
+
+            }
+
+        } while (opcion != 0);
+
+    }
+
+    private void agregarClub() {
+
+        System.out.print("Ingrese ID del club: ");
+        String id = sc.nextLine();
+
+        if (mapaClubes.containsKey(id)) {
+            System.out.println("El club ya existe");
+            return;
+        }
+
+        System.out.print("Nombre del club: ");
+        String nombre = sc.nextLine();
+
+        System.out.print("Direccion del club: ");
+        String direccion = sc.nextLine();
+
+        Club club = new Club(id, nombre, direccion);
+
+        mapaClubes.put(id, club);
+
+        System.out.println("Club agregado correctamente");
+
+    }
+
+    private void buscarClub() {
+
+        System.out.print("Ingrese ID del club: ");
+        String id = sc.nextLine();
+
+        Club club = mapaClubes.get(id);
+
+        if (club != null) {
+            System.out.println(club);
+        } else {
+            System.out.println("Club no encontrado");
+        }
+
+    }
+
+    private void eliminarClub() {
+
+        System.out.print("Ingrese ID del club: ");
+        String id = sc.nextLine();
+
+        if (id.equals("0")) {
+            System.out.println("No se puede eliminar el club 'Sin club'");
+            return;
+        }
+
+        if (mapaClubes.remove(id) != null) {
+            System.out.println("Club eliminado correctamente");
+        } else {
+            System.out.println("Club no encontrado");
+        }
+
+    }
+    
+    private void mostrarClubes() {
+
+        if (mapaClubes.isEmpty()) {
+            System.out.println("No hay clubes registrados");
+            return;
+        }
+
+        for (Club club : mapaClubes.values()) {
+            System.out.println("================================");
+            System.out.println(club);
+        }
+
+    }
+
+    private void agregarActividadAClub() {
+
+        try {
+
+            System.out.print("Ingrese ID del club: ");
+            String id = sc.nextLine();
+
+            Club club = mapaClubes.get(id);
+
+            if (club == null) {
+                throw new ClubNoEncontradoException("Club no encontrado");
+            }
+
+            System.out.print("ID Actividad: ");
+            String idAct = sc.nextLine();
+
+            System.out.print("Nombre Actividad: ");
+            String nombreActividad = sc.nextLine();
+
+            System.out.print("Horario: ");
+            String horario = sc.nextLine();
+
+            System.out.print("Cupos Maximos: ");
+            int cupos = sc.nextInt();
+
+            System.out.print("Costo: ");
+            double costo = sc.nextDouble();
+            sc.nextLine();
+
+            Actividad actividad = new Actividad(idAct, nombreActividad, horario, cupos, costo);
+
+            club.agregarActividad(actividad);
+
+            System.out.println("Actividad agregada correctamente");
+
+        } catch (ClubNoEncontradoException e) {
+
+            System.out.println(e.getMessage());
+
+        }
+
+    }
+    
+    private void eliminarActividadDeClub() {
+
+        System.out.print("Ingrese ID del club: ");
+        String idClub = sc.nextLine();
+
+        Club club = mapaClubes.get(idClub);
+
+        if (club == null) {
+            System.out.println("Club no encontrado");
+            return;
+        }
+
+        club.mostrarActividades();
+
+        System.out.print("Ingrese ID de la actividad a eliminar: ");
+        String idActividad = sc.nextLine();
+
+        if (club.eliminarActividad(idActividad)) {
+            System.out.println("Actividad eliminada correctamente");
+        } else {
+            System.out.println("Actividad no encontrada");
+        }
+
+    }
+
+    private void mostrarActividadesDeClub() {
+
+        System.out.print("Ingrese ID del club: ");
+        String idClub = sc.nextLine();
+
+        Club club = mapaClubes.get(idClub);
+
+        if (club == null) {
+            System.out.println("Club no encontrado");
+            return;
+        }
+
+        System.out.println("\nActividades del club:");
+        club.mostrarActividades();
+
+    }
+
+    // ================= RESERVAS =================
+
+    private void menuReservas() {
+
+        int opcion;
+
+        do {
+
+            System.out.println("\n----------- GESTION DE RESERVAS -----------");
+            System.out.println("1. Realizar Reserva por Actividad");
+            System.out.println("2. Mostrar Reservas");
+            System.out.println("0. Volver");
+            System.out.print("Seleccione: ");
+
+            opcion = sc.nextInt();
+            sc.nextLine();
+
+            switch (opcion) {
+
+                case 1:
+                    realizarReserva();
+                    break;
+
+                case 2:
+                    mostrarReservas();
+                    break;
+
+            }
+
+        } while (opcion != 0);
+
+    }
+
+    private void realizarReserva() {
+
+        try {
+
+            System.out.print("Ingrese RUT socio: ");
+            String rut = sc.nextLine();
+
+            if (!mapaSocios.containsKey(rut)) {
+                System.out.println("Socio no existe");
+                return;
+            }
+
+            String idClub = socioClubMap.get(rut);
+            Club club = mapaClubes.get(idClub);
+
+            if (club == null) {
+                System.out.println("El socio no tiene club asignado");
+                return;
+            }
+
+            List<Actividad> actividades = club.getActividades();
+
+            if (actividades.isEmpty()) {
+                System.out.println("El club no tiene actividades disponibles");
+                return;
+            }
+
+            System.out.println("\nSeleccione una actividad:");
+
+            for (Actividad act : actividades) {
+                System.out.println(act.getIdActividad() + " - " + act.getNombreActividad());
+            }
+
+            System.out.print("Ingrese ID de la actividad: ");
+            String idAct = sc.nextLine();
+
+            Actividad actividad = club.buscarActividad(idAct);
+
+            if (actividad == null) {
+                System.out.println("Actividad no encontrada");
+                return;
+            }
+
+            if (!actividad.hayCuposDisponibles()) {
+                System.out.println("No hay cupos disponibles para esta actividad");
+                return;
+            }
+
+            actividad.setCuposMaximos(actividad.getCuposMaximos() - 1);
+
+            String horario = actividad.getHorario();
+            int precio = (int) actividad.getCostoMensual();
+
+            Reserva reserva = new Reserva(rut, horario, precio);
+
+            listaReservas.add(reserva);
+
+            System.out.println("Reserva realizada correctamente");
+            System.out.println("Actividad: " + actividad.getNombreActividad());
+            System.out.println("Horario asignado: " + horario);
+            System.out.println("Cupos restantes: " + actividad.getCuposMaximos());
+
+        } catch (Exception e) {
+
+            System.out.println("Error al realizar la reserva");
+
+        }
+
+    }
+
+    private void mostrarReservas() {
+
+        if (listaReservas.isEmpty()) {
+            System.out.println("No hay reservas registradas");
+            return;
+        }
+
+        for (Reserva r : listaReservas) {
+            System.out.println("================================");
+            r.mostrarReserva();
+        }
+
+    }
+
+    // ================= MOSTRAR TODO =================
+
+    private void mostrarTodo() {
+
+        System.out.println("\n============= SOCIOS =============");
+        mostrarSocios();
+
+        System.out.println("\n============= CLUBES =============");
+        mostrarClubes();
+
+        System.out.println("\n============= RESERVAS =============");
+        mostrarReservas();
+
+    }
+
+}
