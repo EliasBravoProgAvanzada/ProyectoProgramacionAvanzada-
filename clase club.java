@@ -2,7 +2,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ArrayList;
 
-//Representa un club deportivo que gestiona múltiples actividades.
 
 public class ClubDeportivo {
     // Atributos privados
@@ -56,7 +55,6 @@ public class ClubDeportivo {
         this.actividades = actividades;
     }
 
-    // Metodo para agregar una actividad a la coleccion
 
     public void agregarActividad(Actividad actividad) {
         this.actividades.add(actividad);
@@ -72,7 +70,16 @@ public class ClubDeportivo {
         }
         return null; //retorna null si no existe 
     }
-
+    // Agrega esto a clase club.java para cumplir con la segunda clase del SIA-5
+    
+    public Actividad buscarActividad(String nombre, String horario) {
+        for (Actividad act : actividades) {
+            if (act.getNombre().equals(nombre) && act.getHorario().equals(horario)) {
+            return act;
+             }
+        }
+     return null;
+}
     //Elimina actividad por su ID
 
     public boolean  eliminarActividad(String idActividad){
